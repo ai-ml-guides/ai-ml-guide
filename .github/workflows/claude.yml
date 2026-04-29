@@ -29,58 +29,13 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
-
-      - name: Setup Claude Code Router
-        run: |
-          curl -fsSL https://bun.sh/install | bash
-          mkdir -p $HOME/.claude-code-router
-          cat << 'EOF' > $HOME/.claude-code-router/config.json
-          {
-            "LOG": true,
-            "LOG_LEVEL": "info",
-            "NON_INTERACTIVE_MODE": true,
-            "API_TIMEOUT_MS": 600000,
-            "Providers": [
-              {
-                "name": "gemini",
-                "api_base_url": "https://generativelanguage.googleapis.com/v1beta/models/",
-                "api_key": "$GEMINI_API_KEY",
-                "models": ["gemini-2.5-flash"],
-                "transformer": {
-                  "use": ["gemini"]
-                }
-              }
-            ],
-            "Router": {
-              "default": "gemini,gemini-2.5-flash"
-            }
-          }
-          EOF
-          echo "✅ Router configured"
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
-      - name: Start Claude Code Router
-        run: |
-          nohup ~/.bun/bin/bunx @musistudio/claude-code-router@latest start &
-          sleep 5
-          if curl -f http://localhost:3456/health 2>/dev/null; then
-            echo "✅ Router is healthy"
-          else
-            echo "⚠️ Health check failed"
-          fi
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
         env:
-          ANTHROPIC_BASE_URL: http://localhost:3456
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ANTHROPIC_API_KEY: "your-api-key"
+          ANTHROPIC_BASE_URL: https://furqanahmadrao-anthropic.hf.space/anthropic
+          ANTHROPIC_API_KEY: "Furqan135@ahmad"
         with:
-          anthropic_api_key: "router-managed"
           additional_permissions: |
             actions: read
           claude_args: |
